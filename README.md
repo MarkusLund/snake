@@ -1,5 +1,15 @@
 # Workshop: Snake - Reinforcement Learning
 
+## Tasks
+
+1. Look at the rewards
+
+1. Look at the state
+
+1. Introduce a target network
+
+> One of the interesting things about Deep Q-Learning is that the learning process uses 2 neural networks. These networks have the same architecture but different weights. Every N steps, the weights from the main network are copied to the target network. Using both of these networks leads to more stability in the learning process and helps the algorithm to learn more effectively. In our implementation, the main network weights replace the target network weights every 100 steps.
+
 ## Problems
 
 ### "macOS 11 or later required !"
