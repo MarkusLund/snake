@@ -42,11 +42,11 @@ class DQN:
         self.memory.append((state, action, reward, next_state, done))
 
     def get_next_action(self, state):
+        # With episilon probablity choose random action vs most
         if np.random.rand() <= self.epsilon:
             return random.randrange(self.action_space)
         act_values = self.model.predict(state)
-        print(act_values)
-        return np.argmax(act_values[0])
+        return np.argmax(act_values)
 
     def replay(self):
 
@@ -89,11 +89,15 @@ def train_dqn(episode, env):
         score = 0
         max_steps = 10000
         for i in range(max_steps):
+
+            # 1. Find next action using the Epsilon-Greedy exploration Strategy
             action = agent.get_next_action(state)
+
             prev_state = state
             next_state, reward, done, _ = env.step(action)
             score += reward
             next_state = np.reshape(next_state, (1, env.state_space))
+
             agent.remember(state, action, reward, next_state, done)
             state = next_state
             if params['batch_size'] > 1:
