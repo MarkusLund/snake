@@ -241,7 +241,6 @@ class Snake(gym.Env):
                 self.reward = 1
             else:
                 self.reward = -1
-        # time.sleep(0.1)
         if self.human:
             time.sleep(SLEEP)
             state = self.get_state()

@@ -23,18 +23,13 @@ class DQN:
         self.epsilon_min = params['epsilon_min']
         self.epsilon_decay = params['epsilon_decay']
         self.learning_rate = params['learning_rate']
-        self.layer_sizes = params['layer_sizes']
         self.memory = deque(maxlen=2500)
         self.model = self.build_model()
 
     def build_model(self):
         model = Sequential()
-        for i in range(len(self.layer_sizes)):
-            if i == 0:
-                model.add(Dense(self.layer_sizes[i], input_shape=(
-                    self.state_space,), activation='relu'))
-            else:
-                model.add(Dense(self.layer_sizes[i], activation='relu'))
+        model.add(Dense(128, input_shape=(self.state_space,), activation='relu'))
+        model.add(Dense(128, activation='relu'))
         model.add(Dense(self.action_space, activation='softmax'))
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model
@@ -80,8 +75,8 @@ def train_dqn(episode, env):
 
     sum_of_rewards = []
     agent = DQN(env, params)
-    for e in range(episode):
-        state = env.reset()
+    for episode in range(episode):
+        state = env.reset()  # Reset enviroment before each episode to start fresh
         state = np.reshape(state, (1, env.state_space))
         score = 0
         max_steps = 10000
@@ -97,7 +92,7 @@ def train_dqn(episode, env):
                 agent.replay()
             if done:
                 print(f'final state before dying: {str(prev_state)}')
-                print(f'episode: {e+1}/{episode}, score: {score}')
+                print(f'episode: {episode+1}/{episode}, score: {score}')
                 break
         sum_of_rewards.append(score)
     return sum_of_rewards
@@ -113,13 +108,12 @@ if __name__ == '__main__':
     params['epsilon_min'] = .01
     params['epsilon_decay'] = .995
     params['learning_rate'] = 0.00025
-    params['layer_sizes'] = [128, 128, 128]
 
     results = dict()
-    ep = 50
+    episodes = 50
 
     env = Snake()
-    sum_of_rewards = train_dqn(ep, env)
+    sum_of_rewards = train_dqn(episodes, env)
     results[params['name']] = sum_of_rewards
 
     plot_result(results, direct=True, k=20)
