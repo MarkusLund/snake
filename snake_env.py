@@ -70,8 +70,8 @@ class Snake(gym.Env):
         self.move_apple(first=True)
 
         # distance between apple and snake
-        self.dist = math.sqrt((self.snake.xcor()-self.apple.xcor())
-                              ** 2 + (self.snake.ycor()-self.apple.ycor())**2)
+        self.distance_to_apple = math.sqrt((self.snake.xcor()-self.apple.xcor())
+                                           ** 2 + (self.snake.ycor()-self.apple.ycor())**2)
 
         # score
         self.score = turtle.Turtle()
@@ -175,10 +175,10 @@ class Snake(gym.Env):
 
             self.snake_body[0].goto(self.snake.xcor(), self.snake.ycor())
 
-    def measure_distance(self):
-        self.prev_dist = self.dist
-        self.dist = math.sqrt((self.snake.xcor()-self.apple.xcor())
-                              ** 2 + (self.snake.ycor()-self.apple.ycor())**2)
+    def measure_distance_to_apple(self):
+        self.prev_distance_to_apple = self.distance_to_apple
+        self.distance_to_apple = math.sqrt((self.snake.xcor()-self.apple.xcor())
+                                           ** 2 + (self.snake.ycor()-self.apple.ycor())**2)
 
     def body_check_snake(self):
         if len(self.snake_body) > 1:
@@ -210,6 +210,7 @@ class Snake(gym.Env):
         self.reward = 0
         self.total = 0
         self.done = False
+        self.move_apple(first=True)
 
         state = self.get_state()
 
@@ -240,7 +241,7 @@ class Snake(gym.Env):
             self.reward = 10
             reward_given = True
         self.move_snakebody()
-        self.measure_distance()
+        self.measure_distance_to_apple()
 
         if self.body_check_snake():  # Body collision
             self.reward = -100
@@ -257,7 +258,7 @@ class Snake(gym.Env):
                 self.reset()
 
         if not reward_given:  # Check if distance to apple increased or decreased
-            if self.dist < self.prev_dist:
+            if self.distance_to_apple < self.prev_distance_to_apple:
                 self.reward = 1
             else:
                 self.reward = -1
