@@ -49,6 +49,7 @@ class DQN:
             return
 
         minibatch = random.sample(self.memory, self.batch_size)
+
         states = np.array([i[0] for i in minibatch])
         actions = np.array([i[1] for i in minibatch])
         rewards = np.array([i[2] for i in minibatch])
@@ -58,14 +59,17 @@ class DQN:
         states = np.squeeze(states)
         next_states = np.squeeze(next_states)
 
-        targets = rewards + self.gamma * \
-            (np.amax(self.model.predict_on_batch(next_states), axis=1))*(1-dones)
-        targets_full = self.model.predict_on_batch(states)
+        current_qs = self.model.predict_on_batch(states)
+        future_qs = self.model.predict_on_batch(next_states)
+
+        targets = rewards + self.gamma * (np.amax(future_qs, axis=1)) * (1 - dones)
 
         ind = np.array([i for i in range(self.batch_size)])
-        targets_full[[ind], [actions]] = targets
+        current_qs[[ind], [actions]] = targets
 
-        self.model.fit(states, targets_full, epochs=1, verbose=0)
+        self.model.fit(states, current_qs, epochs=1, verbose=0)
+
+        # Reduce epsilon
         if self.epsilon > self.epsilon_min:
             self.epsilon *= self.epsilon_decay
 
