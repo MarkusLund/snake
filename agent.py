@@ -35,7 +35,7 @@ class DQN:
         model.add(Dense(128, activation='relu'))
 
         model.add(Dense(self.action_space, activation='linear'))
-        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+        model.compile(loss='mse', optimizer=Adam(lr=0.00025))
         return model
 
     def remember(self, state, action, reward, next_state, done):
@@ -66,12 +66,12 @@ class DQN:
         next_states = np.squeeze(next_states)
 
         current_qs = self.model.predict_on_batch(states)
-        future_qs = self.model.predict_on_batch(next_states)
+        future_qs = self.model.predict_on_batch(next_states)  # Introduce target model??
 
-        targets = rewards + self.gamma * (np.amax(future_qs, axis=1)) * (1 - dones)
+        max_future_q = rewards + self.gamma * np.amax(future_qs, axis=1) * (1 - dones)
 
         ind = np.array([i for i in range(self.batch_size)])
-        current_qs[[ind], [actions]] = targets
+        current_qs[[ind], [actions]] = (1 - self.learning_rate) * current_qs[[ind], [actions]] + self.learning_rate * max_future_q
 
         self.model.fit(states, current_qs, epochs=1, verbose=0)
 
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     params['batch_size'] = 500
     params['epsilon_min'] = .01
     params['epsilon_decay'] = .995
-    params['learning_rate'] = 0.00025
+    params['learning_rate'] = 0.7
 
     results = dict()
     episodes = 50
