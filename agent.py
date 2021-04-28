@@ -28,8 +28,13 @@ class DQN:
 
     def build_model(self):
         model = Sequential()
-        model.add(Dense(self.action_space, input_shape=(self.state_space,),
-                  activation='softmax'))  # Input = state, output = action
+
+        # Input = state, output = action
+        model.add(Dense(128, input_shape=(
+            self.state_space,), activation='relu'))
+        model.add(Dense(128, activation='relu'))
+
+        model.add(Dense(self.action_space, activation='linear'))
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model
 
@@ -41,6 +46,7 @@ class DQN:
         if np.random.rand() <= self.epsilon:
             return random.randrange(self.action_space)
         act_values = self.model.predict(state)
+        print(act_values)
         return np.argmax(act_values[0])
 
     def replay(self):
