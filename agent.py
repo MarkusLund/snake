@@ -41,8 +41,7 @@ class DQN:
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
 
-    def act(self, state):
-
+    def get_next_action(self, state):
         if np.random.rand() <= self.epsilon:
             return random.randrange(self.action_space)
         act_values = self.model.predict(state)
@@ -90,7 +89,7 @@ def train_dqn(episode, env):
         score = 0
         max_steps = 10000
         for i in range(max_steps):
-            action = agent.act(state)
+            action = agent.get_next_action(state)
             prev_state = state
             next_state, reward, done, _ = env.step(action)
             score += reward
