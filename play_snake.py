@@ -8,4 +8,4 @@ if __name__ == '__main__':
 
     if human:
         while True:
-            env.run_game()
+            env.calculate_reward()

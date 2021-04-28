@@ -28,9 +28,8 @@ class DQN:
 
     def build_model(self):
         model = Sequential()
-        model.add(Dense(128, input_shape=(self.state_space,), activation='relu'))
-        model.add(Dense(128, activation='relu'))
-        model.add(Dense(self.action_space, activation='softmax'))
+        model.add(Dense(self.action_space, input_shape=(self.state_space,),
+                  activation='softmax'))  # Input = state, output = action
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model
 
