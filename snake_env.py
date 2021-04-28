@@ -43,11 +43,11 @@ class Snake(gym.Env):
 
         # GAME CREATION WITH TURTLE (RENDER?)
         # screen/background
-        self.win = turtle.Screen()
-        self.win.title(GAME_TITLE)
-        self.win.bgcolor(BG_COLOR)
-        self.win.tracer(0)
-        self.win.setup(width=PIXEL_W+32, height=PIXEL_H+32)
+        self.screen = turtle.Screen()
+        self.screen.title(GAME_TITLE)
+        self.screen.bgcolor(BG_COLOR)
+        self.screen.tracer(0)
+        self.screen.setup(width=PIXEL_W+32, height=PIXEL_H+32)
 
         # snake
         self.snake = turtle.Turtle()
@@ -84,11 +84,11 @@ class Snake(gym.Env):
                          align='center', font=('Courier', 18, 'normal'))
 
         # control
-        self.win.listen()
-        self.win.onkey(self.go_up, 'Up')
-        self.win.onkey(self.go_right, 'Right')
-        self.win.onkey(self.go_down, 'Down')
-        self.win.onkey(self.go_left, 'Left')
+        self.screen.listen()
+        self.screen.onkey(self.go_up, 'Up')
+        self.screen.onkey(self.go_right, 'Right')
+        self.screen.onkey(self.go_down, 'Down')
+        self.screen.onkey(self.go_left, 'Left')
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -133,7 +133,7 @@ class Snake(gym.Env):
 
     def move_apple(self, first=False):
         if first or self.snake.distance(self.apple) < 20:
-            while True:
+            while True:  # place apple
                 self.apple.x, self.apple.y = self.random_coordinates()
                 self.apple.goto(round(self.apple.x*20), round(self.apple.y*20))
                 if not self.body_check_apple():
@@ -215,38 +215,8 @@ class Snake(gym.Env):
 
         return state
 
-    def run_game(self):
-        reward_given = False
-        self.win.update()
-        self.move_snake()
-        if self.move_apple():
-            self.reward = 10
-            reward_given = True
-        self.move_snakebody()
-        self.measure_distance()
-        if self.body_check_snake():
-            self.reward = -100
-            reward_given = True
-            self.done = True
-            if self.human:
-                self.reset()
-        if self.wall_check():
-            self.reward = -100
-            reward_given = True
-            self.done = True
-            if self.human:
-                self.reset()
-        if not reward_given:
-            if self.dist < self.prev_dist:
-                self.reward = 1
-            else:
-                self.reward = -1
-        if self.human:
-            time.sleep(SLEEP)
-            state = self.get_state()
-
     def bye(self):
-        self.win.bye()
+        self.screen.bye()
 
     def step(self, action):
         if action == 0:
@@ -257,9 +227,44 @@ class Snake(gym.Env):
             self.go_down()
         if action == 3:
             self.go_left()
-        self.run_game()
+        self.calculate_reward()
         state = self.get_state()
         return state, self.reward, self.done, {}
+
+    def calculate_reward(self):
+        reward_given = False
+        self.screen.update()
+        self.move_snake()
+
+        if self.move_apple():  # Fetched apple
+            self.reward = 10
+            reward_given = True
+        self.move_snakebody()
+        self.measure_distance()
+
+        if self.body_check_snake():  # Body collision
+            self.reward = -100
+            reward_given = True
+            self.done = True
+            if self.human:
+                self.reset()
+
+        if self.wall_check():  # Wall collission
+            self.reward = -100
+            reward_given = True
+            self.done = True
+            if self.human:
+                self.reset()
+
+        if not reward_given:  # Check if distance to apple increased or decreased
+            if self.dist < self.prev_dist:
+                self.reward = 1
+            else:
+                self.reward = -1
+
+        if self.human:
+            time.sleep(SLEEP)
+            state = self.get_state()
 
     # EDIT TO CHANGE STATE
 
