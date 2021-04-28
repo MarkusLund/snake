@@ -35,7 +35,7 @@ class Snake(gym.Env):
         self.seed()
         self.reward = 0
         self.action_space = 4
-        self.state_space = 12
+        self.state_space = 4
 
         self.total, self.maximum = 0, 0
         self.human = human
@@ -246,7 +246,8 @@ class Snake(gym.Env):
             time.sleep(SLEEP)
             state = self.get_state()
 
-    # AI agent
+    def bye(self):
+        self.win.bye()
 
     def step(self, action):
         if action == 0:
@@ -260,6 +261,8 @@ class Snake(gym.Env):
         self.run_game()
         state = self.get_state()
         return state, self.reward, self.done, {}
+
+    # EDIT TO CHANGE STATE
 
     def get_state(self):
         # snake coordinates abs
@@ -317,29 +320,24 @@ class Snake(gym.Env):
         else:
             body_left = 0
 
-        # state: apple_up, apple_right, apple_down, apple_left, obstacle_up, obstacle_right, obstacle_down, obstacle_left, direction_up, direction_right, direction_down, direction_left
-        if self.env_info['state_space'] == 'coordinates':
-            state = [self.apple.xsc, self.apple.ysc, self.snake.xsc, self.snake.ysc,
-                     int(wall_up or body_up), int(wall_right or body_right), int(
-                         wall_down or body_down), int(wall_left or body_left),
-                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
-        elif self.env_info['state_space'] == 'no direction':
-            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x),
-                     int(wall_up or body_up), int(wall_right or body_right), int(
-                         wall_down or body_down), int(wall_left or body_left),
-                     0, 0, 0, 0]
-        elif self.env_info['state_space'] == 'no body knowledge':
-            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x),
-                     wall_up, wall_right, wall_down, wall_left,
-                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
-        else:
-            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x),
-                     int(wall_up or body_up), int(wall_right or body_right), int(
-                         wall_down or body_down), int(wall_left or body_left),
-                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
-
-        # print(state)
+            state = [
+                int(wall_up or body_up),  # obstacle_up
+                int(wall_right or body_right),  # obstacle_right
+                int(wall_down or body_down),  # obstacle_down
+                int(wall_left or body_left),  # obstacle_left
+            ]
+            # state = [
+            #     int(self.snake.y < self.apple.y),  # apple_up
+            #     int(self.snake.x < self.apple.x),  # apple_right
+            #     int(self.snake.y > self.apple.y),  # apple_down
+            #     int(self.snake.x > self.apple.x),  # apple_left
+            #     int(wall_up or body_up),  # obstacle_up
+            #     int(wall_right or body_right),  # obstacle_right
+            #     int(wall_down or body_down),  # obstacle_down
+            #     int(wall_left or body_left),  # obstacle_left
+            #     int(self.snake.direction == 'up'),  # direction_up
+            #     int(self.snake.direction == 'right'),  # direction_right
+            #     int(self.snake.direction == 'down'),  # direction_down
+            #     int(self.snake.direction == 'left')  # direction_left
+            # ]
         return state
-
-    def bye(self):
-        self.win.bye()
