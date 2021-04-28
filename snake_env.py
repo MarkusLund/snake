@@ -25,9 +25,10 @@ SNAKE_START_LOC_V = 0
 APPLE_SHAPE = 'circle'
 APPLE_COLOR = 'green'
 
+
 class Snake(gym.Env):
 
-    def __init__(self, human=False, env_info={'state_space':None}):
+    def __init__(self, human=False, env_info={'state_space': None}):
         super(Snake, self).__init__()
 
         self.done = False
@@ -40,14 +41,14 @@ class Snake(gym.Env):
         self.human = human
         self.env_info = env_info
 
-        ## GAME CREATION WITH TURTLE (RENDER?)
+        # GAME CREATION WITH TURTLE (RENDER?)
         # screen/background
         self.win = turtle.Screen()
         self.win.title(GAME_TITLE)
         self.win.bgcolor(BG_COLOR)
         self.win.tracer(0)
         self.win.setup(width=PIXEL_W+32, height=PIXEL_H+32)
-                
+
         # snake
         self.snake = turtle.Turtle()
         self.snake.shape(SNAKE_SHAPE)
@@ -69,7 +70,8 @@ class Snake(gym.Env):
         self.move_apple(first=True)
 
         # distance between apple and snake
-        self.dist = math.sqrt((self.snake.xcor()-self.apple.xcor())**2 + (self.snake.ycor()-self.apple.ycor())**2)
+        self.dist = math.sqrt((self.snake.xcor()-self.apple.xcor())
+                              ** 2 + (self.snake.ycor()-self.apple.ycor())**2)
 
         # score
         self.score = turtle.Turtle()
@@ -78,7 +80,8 @@ class Snake(gym.Env):
         self.score.penup()
         self.score.hideturtle()
         self.score.goto(0, 100)
-        self.score.write(f"Total: {self.total}   Highest: {self.maximum}", align='center', font=('Courier', 18, 'normal'))
+        self.score.write(f"Total: {self.total}   Highest: {self.maximum}",
+                         align='center', font=('Courier', 18, 'normal'))
 
         # control
         self.win.listen()
@@ -95,7 +98,7 @@ class Snake(gym.Env):
         apple_x = random.randint(-WIDTH/2, WIDTH/2)
         apple_y = random.randint(-HEIGHT/2, HEIGHT/2)
         return apple_x, apple_y
-    
+
     def move_snake(self):
         if self.snake.direction == 'stop':
             self.reward = 0
@@ -111,30 +114,25 @@ class Snake(gym.Env):
         if self.snake.direction == 'left':
             x = self.snake.xcor()
             self.snake.setx(x - 20)
-        
-    
+
     def go_up(self):
         if self.snake.direction != "down":
             self.snake.direction = "up"
-    
-    
+
     def go_down(self):
         if self.snake.direction != "up":
             self.snake.direction = "down"
-    
-    
+
     def go_right(self):
         if self.snake.direction != "left":
             self.snake.direction = "right"
-    
-    
+
     def go_left(self):
         if self.snake.direction != "right":
             self.snake.direction = "left"
 
-
     def move_apple(self, first=False):
-        if first or self.snake.distance(self.apple) < 20:    
+        if first or self.snake.distance(self.apple) < 20:
             while True:
                 self.apple.x, self.apple.y = self.random_coordinates()
                 self.apple.goto(round(self.apple.x*20), round(self.apple.y*20))
@@ -146,20 +144,19 @@ class Snake(gym.Env):
             first = False
             return True
 
-
     def update_score(self):
         self.total += 1
         if self.total >= self.maximum:
             self.maximum = self.total
         self.score.clear()
-        self.score.write(f"Total: {self.total}   Highest: {self.maximum}", align='center', font=('Courier', 18, 'normal'))
-
+        self.score.write(f"Total: {self.total}   Highest: {self.maximum}",
+                         align='center', font=('Courier', 18, 'normal'))
 
     def reset_score(self):
         self.score.clear()
         self.total = 0
-        self.score.write(f"Total: {self.total}   Highest: {self.maximum}", align='center', font=('Courier', 18, 'normal'))
-                    
+        self.score.write(f"Total: {self.total}   Highest: {self.maximum}",
+                         align='center', font=('Courier', 18, 'normal'))
 
     def add_to_body(self):
         body = turtle.Turtle()
@@ -168,7 +165,6 @@ class Snake(gym.Env):
         body.color('black')
         body.penup()
         self.snake_body.append(body)
-        
 
     def move_snakebody(self):
         if len(self.snake_body) > 0:
@@ -178,19 +174,18 @@ class Snake(gym.Env):
                 self.snake_body[index].goto(x, y)
 
             self.snake_body[0].goto(self.snake.xcor(), self.snake.ycor())
-        
-    
+
     def measure_distance(self):
         self.prev_dist = self.dist
-        self.dist = math.sqrt((self.snake.xcor()-self.apple.xcor())**2 + (self.snake.ycor()-self.apple.ycor())**2)
-
+        self.dist = math.sqrt((self.snake.xcor()-self.apple.xcor())
+                              ** 2 + (self.snake.ycor()-self.apple.ycor())**2)
 
     def body_check_snake(self):
         if len(self.snake_body) > 1:
             for body in self.snake_body[1:]:
                 if body.distance(self.snake) < 20:
                     self.reset_score()
-                    return True     
+                    return True
 
     def body_check_apple(self):
         if len(self.snake_body) > 0:
@@ -202,7 +197,7 @@ class Snake(gym.Env):
         if self.snake.xcor() > 200 or self.snake.xcor() < -200 or self.snake.ycor() > 200 or self.snake.ycor() < -200:
             self.reset_score()
             return True
-    
+
     def reset(self):
         if self.human:
             time.sleep(1)
@@ -219,7 +214,6 @@ class Snake(gym.Env):
         state = self.get_state()
 
         return state
-
 
     def run_game(self):
         reward_given = False
@@ -252,8 +246,8 @@ class Snake(gym.Env):
             time.sleep(SLEEP)
             state = self.get_state()
 
-    
     # AI agent
+
     def step(self, action):
         if action == 0:
             self.go_up()
@@ -267,13 +261,12 @@ class Snake(gym.Env):
         state = self.get_state()
         return state, self.reward, self.done, {}
 
-
     def get_state(self):
         # snake coordinates abs
-        self.snake.x, self.snake.y = self.snake.xcor()/WIDTH, self.snake.ycor()/HEIGHT   
+        self.snake.x, self.snake.y = self.snake.xcor()/WIDTH, self.snake.ycor()/HEIGHT
         # snake coordinates scaled 0-1
         self.snake.xsc, self.snake.ysc = self.snake.x/WIDTH+0.5, self.snake.y/HEIGHT+0.5
-        # apple coordintes scaled 0-1 
+        # apple coordintes scaled 0-1
         self.apple.xsc, self.apple.ysc = self.apple.x/WIDTH+0.5, self.apple.y/HEIGHT+0.5
 
         # wall check
@@ -306,54 +299,47 @@ class Snake(gym.Env):
                         body_left.append(1)
                     elif body.xcor() > self.snake.xcor():
                         body_right.append(1)
-        
-        if len(body_up) > 0: body_up = 1
-        else: body_up = 0
-        if len(body_right) > 0: body_right = 1
-        else: body_right = 0
-        if len(body_down) > 0: body_down = 1
-        else: body_down = 0
-        if len(body_left) > 0: body_left = 1
-        else: body_left = 0
+
+        if len(body_up) > 0:
+            body_up = 1
+        else:
+            body_up = 0
+        if len(body_right) > 0:
+            body_right = 1
+        else:
+            body_right = 0
+        if len(body_down) > 0:
+            body_down = 1
+        else:
+            body_down = 0
+        if len(body_left) > 0:
+            body_left = 1
+        else:
+            body_left = 0
 
         # state: apple_up, apple_right, apple_down, apple_left, obstacle_up, obstacle_right, obstacle_down, obstacle_left, direction_up, direction_right, direction_down, direction_left
         if self.env_info['state_space'] == 'coordinates':
-            state = [self.apple.xsc, self.apple.ysc, self.snake.xsc, self.snake.ysc, \
-                    int(wall_up or body_up), int(wall_right or body_right), int(wall_down or body_down), int(wall_left or body_left), \
-                    int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
+            state = [self.apple.xsc, self.apple.ysc, self.snake.xsc, self.snake.ysc,
+                     int(wall_up or body_up), int(wall_right or body_right), int(
+                         wall_down or body_down), int(wall_left or body_left),
+                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
         elif self.env_info['state_space'] == 'no direction':
-            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x), \
-                    int(wall_up or body_up), int(wall_right or body_right), int(wall_down or body_down), int(wall_left or body_left), \
-                    0, 0, 0, 0]
+            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x),
+                     int(wall_up or body_up), int(wall_right or body_right), int(
+                         wall_down or body_down), int(wall_left or body_left),
+                     0, 0, 0, 0]
         elif self.env_info['state_space'] == 'no body knowledge':
-            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x), \
-                    wall_up, wall_right, wall_down, wall_left, \
-                    int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
+            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x),
+                     wall_up, wall_right, wall_down, wall_left,
+                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
         else:
-            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x), \
-                    int(wall_up or body_up), int(wall_right or body_right), int(wall_down or body_down), int(wall_left or body_left), \
-                    int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
-            
+            state = [int(self.snake.y < self.apple.y), int(self.snake.x < self.apple.x), int(self.snake.y > self.apple.y), int(self.snake.x > self.apple.x),
+                     int(wall_up or body_up), int(wall_right or body_right), int(
+                         wall_down or body_down), int(wall_left or body_left),
+                     int(self.snake.direction == 'up'), int(self.snake.direction == 'right'), int(self.snake.direction == 'down'), int(self.snake.direction == 'left')]
+
         # print(state)
         return state
 
     def bye(self):
         self.win.bye()
-
-
-
-if __name__ == '__main__':            
-    human = True
-    env = Snake(human=human)
-
-    if human:
-        while True:
-            env.run_game()
-
-    
-
-    
-
-
-
-    
