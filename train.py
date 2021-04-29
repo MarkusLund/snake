@@ -17,7 +17,7 @@ def train_dqn(episodes, env):
     id = f'{now.hour}{now.minute}'
     episode_rewards = []
     agent = DQN(env, params)
-    best_score = -999
+    best_score = 0
     for episode in range(episodes):
         state = env.reset()  # Reset enviroment before each episode to start fresh
         state = np.reshape(state, (1, env.state_space))
@@ -32,9 +32,11 @@ def train_dqn(episodes, env):
             total_reward += reward
             next_state = np.reshape(next_state, (1, env.state_space))
 
-            # 3. Update the Q-function (train model) or do 3b. TIPS: Wont the agent learn, check out experience replay!
-            agent.learn(state, action, reward, next_state, done)
+            # 3. Update the Q-function (train model)
+            agent.remember(state, action, reward, next_state, done)
+            agent.train_with_experience_replay()
 
+            # 4. Change exploration vs. explotation probability
             agent.update_exploration_strategy(episode)
             state = next_state
 

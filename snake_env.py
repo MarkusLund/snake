@@ -234,26 +234,27 @@ class Snake(gym.Env):
         state = self.get_state()
         return state, self.reward, self.done, {}
 
+    # TODO: Update, add, customize rewards.
     def calculate_reward(self):
         reward_given = False
         self.screen.update()
         self.move_snake()
 
         if self.move_apple():  # Fetched apple
-            self.reward = 10
+            self.reward = 0
             reward_given = True
         self.move_snakebody()
         self.measure_distance_to_apple()
 
         if self.body_check_snake():  # Body collision
-            self.reward = -100
+            self.reward = 0
             reward_given = True
             self.done = True
             if self.human:
                 self.reset()
 
         if self.wall_check():  # Wall collission
-            self.reward = -100
+            self.reward = 0
             reward_given = True
             self.done = True
             if self.human:
@@ -261,28 +262,15 @@ class Snake(gym.Env):
 
         if not reward_given:  # Check if distance to apple increased or decreased
             if self.distance_to_apple < self.prev_distance_to_apple:
-                self.reward = 1
+                self.reward = 0
             else:
-                self.reward = -1
+                self.reward = 0
 
         if self.human:
             time.sleep(SLEEP)
             state = self.get_state()
 
-    # EDIT TO CHANGE STATE
-
-    def apple_in_front(self):
-        if (self.snake.x > self.apple.x and self.snake.y == self.apple.y and self.snake.direction == "left"):
-            return self.snake.x - self.apple.x
-        elif (self.snake.x < self.apple.x and self.snake.y == self.apple.y and self.snake.direction == "right"):
-            return self.apple.x - self.snake.x
-        elif (self.snake.y < self.apple.y and self.snake.x == self.apple.x and self.snake.direction == "down"):
-            return self.apple.y - self.snake.y
-        elif (self.snake.y > self.apple.y and self.snake.x == self.apple.x and self.snake.direction == "up"):
-            return self.snake.y - self.apple.y
-        else:
-            return 21
-
+    # TODO: Edit the state space. What is the agent allowed to observe?
     def get_state(self):
         # snake coordinates abs
         self.snake.x, self.snake.y = self.snake.xcor()/WIDTH, self.snake.ycor()/HEIGHT
@@ -339,26 +327,10 @@ class Snake(gym.Env):
         else:
             body_left = 0
 
-        # state = [
-        #     int(wall_up or body_up),  # obstacle_up
-        #     int(wall_right or body_right),  # obstacle_right
-        #     int(wall_down or body_down),  # obstacle_down
-        #     int(wall_left or body_left),  # obstacle_left
-        #     self.apple_in_front()  # Apple in front
-        # ]
-
         state = [
-            int(self.snake.y < self.apple.y),  # apple_up
-            int(self.snake.x < self.apple.x),  # apple_right
-            int(self.snake.y > self.apple.y),  # apple_down
-            int(self.snake.x > self.apple.x),  # apple_left
             int(wall_up or body_up),  # obstacle_up
             int(wall_right or body_right),  # obstacle_right
             int(wall_down or body_down),  # obstacle_down
             int(wall_left or body_left),  # obstacle_left
-            int(self.snake.direction == 'up'),  # direction_up
-            int(self.snake.direction == 'right'),  # direction_right
-            int(self.snake.direction == 'down'),  # direction_down
-            int(self.snake.direction == 'left')  # direction_left
         ]
         return state
