@@ -35,7 +35,6 @@ class Snake(gym.Env):
         self.seed()
         self.reward = 0
         self.action_space = 4
-        self.state_space = 12
 
         self.total, self.maximum = 0, 0
         self.human = human
@@ -89,6 +88,9 @@ class Snake(gym.Env):
         self.screen.onkey(self.go_right, 'Right')
         self.screen.onkey(self.go_down, 'Down')
         self.screen.onkey(self.go_left, 'Left')
+
+        # Set state space size
+        self.state_space = len(self.get_state())
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -269,6 +271,18 @@ class Snake(gym.Env):
 
     # EDIT TO CHANGE STATE
 
+    def apple_in_front(self):
+        if (self.snake.x > self.apple.x and self.snake.y == self.apple.y and self.snake.direction == "left"):
+            return self.snake.x - self.apple.x
+        elif (self.snake.x < self.apple.x and self.snake.y == self.apple.y and self.snake.direction == "right"):
+            return self.apple.x - self.snake.x
+        elif (self.snake.y < self.apple.y and self.snake.x == self.apple.x and self.snake.direction == "down"):
+            return self.apple.y - self.snake.y
+        elif (self.snake.y > self.apple.y and self.snake.x == self.apple.x and self.snake.direction == "up"):
+            return self.snake.y - self.apple.y
+        else:
+            return 21
+
     def get_state(self):
         # snake coordinates abs
         self.snake.x, self.snake.y = self.snake.xcor()/WIDTH, self.snake.ycor()/HEIGHT
@@ -325,14 +339,13 @@ class Snake(gym.Env):
         else:
             body_left = 0
 
-            # If editing state: Remember to also change self.state_space = num_states_value
-
-            # state = [
-            #     int(wall_up or body_up),  # obstacle_up
-            #     int(wall_right or body_right),  # obstacle_right
-            #     int(wall_down or body_down),  # obstacle_down
-            #     int(wall_left or body_left),  # obstacle_left
-            # ]
+        # state = [
+        #     int(wall_up or body_up),  # obstacle_up
+        #     int(wall_right or body_right),  # obstacle_right
+        #     int(wall_down or body_down),  # obstacle_down
+        #     int(wall_left or body_left),  # obstacle_left
+        #     self.apple_in_front()  # Apple in front
+        # ]
 
         state = [
             int(self.snake.y < self.apple.y),  # apple_up

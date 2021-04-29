@@ -1,5 +1,23 @@
 # Workshop: Snake - Reinforcement Learning
 
+## Plan
+
+08.00 Welcome
+
+08.15-09.00 Setup, some start working
+
+2,5 hours work
+
+11.30-12.30 Lunch
+
+2,5 hours work
+
+15.00 keynote
+
+## Tips
+
+Keep the neural network simple. Not much is needed for a simple state action space.
+
 ## Tasks
 
 1. Look at the rewards

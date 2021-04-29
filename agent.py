@@ -1,16 +1,13 @@
-from snake_env import Snake
-
 import random
 import numpy as np
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 from collections import deque
-from plot import plot_result
+from tensorflow.python.keras.saving.save import load_model
 
 
 class DQN:
-
     """ Deep Q Network """
 
     def __init__(self, env, params):
@@ -38,6 +35,12 @@ class DQN:
         model.add(Dense(self.action_space, activation='linear'))
         model.compile(loss='mse', optimizer=Adam(lr=0.00025))
         return model
+
+    def save_model(self, id, name):
+        self.model.save(f'./models/{id}/{name}')
+
+    def load_model(self, id, name):
+        self.model = load_model(f'./models/{id}/{name}')
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
@@ -76,78 +79,16 @@ class DQN:
 
         self.model.fit(states, current_qs, epochs=1, verbose=0)
 
-    def update_q(self, state, action, reward, next_state, done):
-
-        if len(self.memory) < self.batch_size:
-            return
-
+    def learn(self, state, action, reward, next_state, done):
         current_qs = self.model.predict(state)
         future_qs = self.model.predict(next_state)
 
         max_future_q = reward + self.gamma * np.amax(future_qs, axis=1) * (1 - done)
 
-        # current_qs[action] = (1 - self.learning_rate) * current_qs[action] + self.learning_rate * max_future_q
-        current_qs[action] = max_future_q
+        current_qs[action] = (1 - self.learning_rate) * current_qs[action] + self.learning_rate * max_future_q
 
         self.model.fit(state, current_qs, epochs=1, verbose=0)
 
     def update_exploration_strategy(self, episode):
         # Reduce epsilon
         self.epsilon = self.epsilon_min + (self.epsilon_max - self.epsilon_min) * np.exp(-self.epsilon_decay * episode)
-
-
-def train_dqn(episodes, env):
-
-    episode_rewards = []
-    agent = DQN(env, params)
-    for episode in range(episodes):
-        state = env.reset()  # Reset enviroment before each episode to start fresh
-        state = np.reshape(state, (1, env.state_space))
-        total_reward = 0
-        max_steps = 10000
-        for step in range(max_steps):
-            # 1. Find next action using the Epsilon-Greedy exploration Strategy
-            action = agent.get_action(state)
-
-            # 2. perform action in enviroment
-            next_state, reward, done, _ = env.step(action)
-            total_reward += reward
-            next_state = np.reshape(next_state, (1, env.state_space))
-
-            # 3a. Update the Q-function (train model) or do 3b.
-            agent.update_q(state, action, reward, next_state, done)
-
-            # # 3b. Use experience replay
-            # agent.remember(state, action, reward, next_state, done)
-            # agent.experience_replay()
-
-            agent.update_exploration_strategy(episode)
-            state = next_state
-            ep = agent.epsilon
-            if done:
-                print(f'episode: {episode+1}/{episodes}, score: {total_reward}, steps: {step}, epsilon: {ep}')
-                break
-        episode_rewards.append(total_reward)
-    return episode_rewards
-
-
-if __name__ == '__main__':
-
-    params = dict()
-    params['name'] = None
-    params['gamma'] = 0.95
-    params['batch_size'] = 500
-    params['epsilon'] = 1
-    params['epsilon_min'] = 0.01
-    params['epsilon_max'] = 1
-    params['epsilon_decay'] = 0.01
-    params['learning_rate'] = 0.7
-
-    results = dict()
-    episodes = 50
-
-    env = Snake()
-    sum_of_rewards = train_dqn(episodes, env)
-    results[params['name']] = sum_of_rewards
-
-    plot_result(results, direct=True, k=20)
