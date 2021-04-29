@@ -1,18 +1,12 @@
 # Workshop: Snake - Reinforcement Learning
 
-## Plan
+! WORK IN PROGRESS !
 
-08.00 Welcome
+## Requirements
 
-08.15-09.00 Setup, some start working
+Recommended Python 3.8 downloaded from python.org on Mac OS.
 
-2,5 hours work
-
-11.30-12.30 Lunch
-
-2,5 hours work
-
-15.00 keynote
+You may need to install a tensorflow version manually, e.g. `pip install https://storage.googleapis.com/tensorflow/mac/cpu/tensorflow-2.4.0-cp38-cp38-macosx_10_14_x86_64.whl` (for Python 3.8)
 
 ## Tips
 
@@ -26,7 +20,7 @@ Keep the neural network simple. Not much is needed for a simple state action spa
 
 1. Introduce a target network
 
-> One of the interesting things about Deep Q-Learning is that the learning process uses 2 neural networks. These networks have the same architecture but different weights. Every N steps, the weights from the main network are copied to the target network. Using both of these networks leads to more stability in the learning process and helps the algorithm to learn more effectively. In our implementation, the main network weights replace the target network weights every 100 steps.
+> One of the interesting things about Deep Q-Learning is that the learning process uses 2 neural networks. These networks have the same architecture but different weights. Every N steps, the weights from the main network are copied to the target network. Using both of these networks leads to more stability in the learning process and helps the algorithm to learn more effectively. In our implementation, the main network weights replace the target network weights every 100 steps. [source](https://towardsdatascience.com/deep-q-learning-tutorial-mindqn-2a4c855abffc)
 
 ## Problems
 
@@ -34,13 +28,10 @@ Keep the neural network simple. Not much is needed for a simple state action spa
 
 Solution: Download and install python from python.org as this is probebly an issue with the homebrew-version.
 
-## README form source project
+## Files
 
-Snake
-
-This project contains the following files:
-
-1. snake_env.py : run this and you can play the game Snake by yourself
-2. agent_1.py : run this and a Deep Reinforcement Learning Agent will learn to play snake
-3. plot_script.py : plotting the results of the agent
-4. requirements.txt : you will need some Python packages, like turtle, TensorFlow and Keras before you can run the scripts, install these first
+1. agent.py : Edit this to implement the meat of the DQN algorithm
+1. snake_env.py : Here you can edit the state and rewards given.
+1. train.py : Train your model
+1. play_snake.py : Play snake and check if your requirements are in place.
+1. test.py : Test your saved models. Eg. python test.py 1043(id) 650(total_reward) (models stored in models/{timestamp}/{total_reward})
