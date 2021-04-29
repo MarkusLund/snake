@@ -40,8 +40,10 @@ class DQN:
         return model
 
     def get_action(self, state):
-        # TODO: With episilon probablity choose random action vs best action
-        return 0
+        if np.random.rand() <= self.epsilon:
+            return random.randrange(self.action_space)
+        act_values = self.model.predict(state)
+        return np.argmax(act_values)
 
     def train_with_experience_replay(self):
         if len(self.memory) < self.batch_size:
