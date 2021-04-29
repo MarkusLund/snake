@@ -24,34 +24,8 @@ class DQN:
         self.memory = deque(maxlen=2500)
         self.model = self.build_model()
 
-    def build_model(self):
-        # TODO: Create model, remember to compile
-        model = Sequential()
-
-        # Input = state, output = action
-        model.add(Dense(128, input_shape=(
-            self.state_space,), activation='relu'))
-        model.add(Dense(128, activation='relu'))
-        model.add(Dense(self.action_space, activation='linear'))
-        model.compile(loss='mse', optimizer=Adam(lr=0.00025))
-        return model
-
-    def save_model(self, id, name):
-        self.model.save(f'./models/{id}/{name}')
-
-    def load_model(self, id, name):
-        self.model = load_model(f'./models/{id}/{name}')
-
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
-
-    def get_action(self, state):
-        # With episilon probablity choose random action vs most
-        # TODO: Implement method
-        if np.random.rand() <= self.epsilon:
-            return random.randrange(self.action_space)
-        act_values = self.model.predict(state)
-        return np.argmax(act_values)
 
     def experience_replay(self):
 
@@ -78,6 +52,31 @@ class DQN:
         current_qs[[ind], [actions]] = (1 - self.learning_rate) * current_qs[[ind], [actions]] + self.learning_rate * max_future_q
 
         self.model.fit(states, current_qs, epochs=1, verbose=0)
+
+    def save_model(self, id, name):
+        self.model.save(f'./models/{id}/{name}')
+
+    def load_model(self, id, name):
+        self.model = load_model(f'./models/{id}/{name}')
+
+    def build_model(self):
+        # TODO: Create model, remember to compile
+        model = Sequential()
+
+        # Input = state, output = action
+        model.add(Dense(128, input_shape=(self.state_space,), activation='relu'))
+        model.add(Dense(128, activation='relu'))
+        model.add(Dense(self.action_space, activation='linear'))
+        model.compile(loss='mse', optimizer=Adam(lr=0.00025))
+        return model
+
+    def get_action(self, state):
+        # With episilon probablity choose random action vs most
+        # TODO: Implement method
+        if np.random.rand() <= self.epsilon:
+            return random.randrange(self.action_space)
+        act_values = self.model.predict(state)
+        return np.argmax(act_values)
 
     def learn(self, state, action, reward, next_state, done):
         current_qs = self.model.predict(state)
