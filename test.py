@@ -1,4 +1,4 @@
-from snake_env import Snake
+from environment import Snake
 from agent import DQN
 import time
 import numpy as np
@@ -9,9 +9,8 @@ import sys
 def test_dqn(env):
     agent = DQN(env, params)
 
-    print('Number of arguments:', len(sys.argv), 'arguments.')
-    print('Argument List:', str(sys.argv))
     agent.load_model(sys.argv[1], sys.argv[2])
+
     state = env.reset()  # Reset enviroment before each episode to start fresh
     state = np.reshape(state, (1, env.state_space))
     max_steps = 10000

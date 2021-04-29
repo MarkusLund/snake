@@ -1,4 +1,4 @@
-from snake_env import Snake
+from environment import Snake
 from agent import DQN
 
 import numpy as np
