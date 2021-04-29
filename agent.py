@@ -58,13 +58,15 @@ class DQN:
         states = np.squeeze(states)
         next_states = np.squeeze(next_states)
 
-        # Tips:
-        # Use self.model.predict_on_batch()
-        # Do NOT use much time on this. Ask if you're stuck.
-        # The implementation in python can be harder than actually understanding the equation.
-        # Find the eqation in the README
+        current_qs = self.model.predict_on_batch(states)
+        future_qs = self.model.predict_on_batch(next_states)  # Introduce target model??
 
-        self.model.fit(states, None, epochs=1, verbose=0)
+        max_future_q = rewards + self.gamma * np.amax(future_qs, axis=1) * (1 - dones)
+
+        ind = np.array([i for i in range(self.batch_size)])
+        current_qs[[ind], [actions]] = (1 - self.learning_rate) * current_qs[[ind], [actions]] + self.learning_rate * max_future_q
+
+        self.model.fit(states, current_qs, epochs=1, verbose=0)
 
     def update_exploration_strategy(self, episode):
         # TODO: Reduce epsilon
