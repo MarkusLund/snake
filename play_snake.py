@@ -1,5 +1,5 @@
 
-from snake_env import Snake
+from environment import Snake
 import numpy as np
 from tensorflow.keras import *
 

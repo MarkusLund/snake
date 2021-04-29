@@ -2,6 +2,8 @@
 
 ## Deep Q-learning algorithm
 
+[Source: deeplizard.com](https://deeplizard.com/learn/video/xVkPh9E9GfE)
+
 1. Initialize replay memory capacity.
 1. Initialize the network with random weights.
 1. For each episode:
@@ -60,8 +62,8 @@ Solution: Download and install python from python.org as this is probebly an iss
 
 ## Files
 
-1. agent.py : Edit this to implement the meat of the DQN algorithm
-1. snake_env.py : Here you can edit the state and rewards given.
-1. train.py : Train your model
-1. play_snake.py : Play snake and check if your requirements are in place.
-1. test.py : Test your saved models. Eg. python test.py 1043(id) 650(total_reward) (models stored in models/{timestamp}/{total_reward})
+- `agent.py` : Edit this to implement the meat of the DQN algorithm
+- `environment.py` : Here you can edit the state and rewards given.
+- `play_snake.py` : Play snake and check if your requirements are in place.
+- `train.py` : Train your model
+- `test.py` : Test your saved models. Eg. python test.py 1043(id) 650(total_reward) (models stored in models/{timestamp}/{total_reward})
