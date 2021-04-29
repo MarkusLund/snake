@@ -36,6 +36,9 @@ class DQN:
     def build_model(self):
         # TODO: Create model, remember to compile
         model = Sequential()
+        model.add(Dense(128, input_shape=(self.state_space,), activation='relu'))
+        model.add(Dense(128, activation='relu'))
+        model.add(Dense(self.action_space, activation='linear'))
         model.compile(loss='mse', optimizer=Adam(lr=0.00025))
         return model
 
