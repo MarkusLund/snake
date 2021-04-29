@@ -241,20 +241,20 @@ class Snake(gym.Env):
         self.move_snake()
 
         if self.move_apple():  # Fetched apple
-            self.reward = 0
+            self.reward = 10
             reward_given = True
         self.move_snakebody()
         self.measure_distance_to_apple()
 
         if self.body_check_snake():  # Body collision
-            self.reward = 0
+            self.reward = -100
             reward_given = True
             self.done = True
             if self.human:
                 self.reset()
 
         if self.wall_check():  # Wall collission
-            self.reward = 0
+            self.reward = -100
             reward_given = True
             self.done = True
             if self.human:
@@ -262,9 +262,9 @@ class Snake(gym.Env):
 
         if not reward_given:  # Check if distance to apple increased or decreased
             if self.distance_to_apple < self.prev_distance_to_apple:
-                self.reward = 0
+                self.reward = 1
             else:
-                self.reward = 0
+                self.reward = -1
 
         if self.human:
             time.sleep(SLEEP)
