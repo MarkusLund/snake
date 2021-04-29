@@ -67,5 +67,4 @@ class DQN:
         self.model.fit(states, None, epochs=1, verbose=0)
 
     def update_exploration_strategy(self, episode):
-        # TODO: Reduce epsilon
-        self.epsilon = self.epsilon
+        self.epsilon = self.epsilon_min + (self.epsilon_max - self.epsilon_min) * np.exp(-self.epsilon_decay * episode)
