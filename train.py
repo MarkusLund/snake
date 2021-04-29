@@ -6,6 +6,12 @@ from plot import plot_result
 import datetime
 
 
+def save_model(id, agent, best_score, total_reward):
+    if (total_reward > best_score):
+        agent.save_model(id, total_reward)
+        best_score = total_reward
+
+
 def train_dqn(episodes, env):
     now = datetime.datetime.now()
     id = f'{now.hour}{now.minute}'
@@ -26,27 +32,18 @@ def train_dqn(episodes, env):
             total_reward += reward
             next_state = np.reshape(next_state, (1, env.state_space))
 
-            # 3a. Update the Q-function (train model) or do 3b.
-            # agent.learn(state, action, reward, next_state, done)
-
-            # # 3b. Use experience replay
-            agent.remember(state, action, reward, next_state, done)
-            agent.experience_replay()
+            # 3. Update the Q-function (train model) or do 3b. TIPS: Wont the agent learn, check out experience replay!
+            agent.learn(state, action, reward, next_state, done)
 
             agent.update_exploration_strategy(episode)
             state = next_state
 
             if done:
                 print(f'episode: {episode+1}/{episodes}, score: {total_reward}, steps: {step}, epsilon: {agent.epsilon}')
-                if (total_reward > best_score):
-                    agent.save_model(id, total_reward)
-                    best_score = total_reward
+                save_model(id, agent, best_score, total_reward)
                 break
 
-        if (total_reward > best_score):
-            agent.save_model(id, total_reward)
-            best_score = total_reward
-
+        save_model(id, agent, best_score, total_reward)
         episode_rewards.append(total_reward)
     return episode_rewards
 
