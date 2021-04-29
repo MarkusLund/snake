@@ -42,6 +42,8 @@ Find all the TODOs 🕵️‍♂️
    1. Implement the Bellman Equation in `agent.py/train_with_experience_replay()` to actually train your model from previous (state, action)-pairs.
    1. OPTIONAL - Gradually change exploration vs. explotation by changing (`agent.py/update_exploration_strategy()`)
 
+   **Stuck? Check out the different git brances solution examples.**
+
 ### Bonus task
 
 1. Introduce a target network
