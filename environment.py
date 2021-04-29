@@ -328,9 +328,17 @@ class Snake(gym.Env):
             body_left = 0
 
         state = [
+            int(self.snake.y < self.apple.y),  # apple_up
+            int(self.snake.x < self.apple.x),  # apple_right
+            int(self.snake.y > self.apple.y),  # apple_down
+            int(self.snake.x > self.apple.x),  # apple_left
             int(wall_up or body_up),  # obstacle_up
             int(wall_right or body_right),  # obstacle_right
             int(wall_down or body_down),  # obstacle_down
             int(wall_left or body_left),  # obstacle_left
+            int(self.snake.direction == 'up'),  # direction_up
+            int(self.snake.direction == 'right'),  # direction_right
+            int(self.snake.direction == 'down'),  # direction_down
+            int(self.snake.direction == 'left')  # direction_left
         ]
         return state
