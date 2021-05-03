@@ -69,3 +69,7 @@ Solution: Download and install python from python.org as this is probebly an iss
 - `play_snake.py` : Play snake and check if your requirements are in place.
 - `train.py` : Train your model
 - `test.py` : Test your saved models. Eg. python test.py 1043(id) 650(total_reward) (models stored in models/{timestamp}/{total_reward})
+
+## Example run
+
+![Snake run](imgs/snake-gif.gif)
